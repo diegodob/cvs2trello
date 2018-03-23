@@ -1,0 +1,38 @@
+{
+  "name": "csv2trello",
+  "version": "1.0.0",
+  "description": "Convert an CSV file to trello cards in a board",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diegodob/cvs2trello.git"
+  },
+  "keywords": [
+    "csv",
+    "trello",
+    "import"
+  ],
+  "author": "Diegodob",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/diegodob/cvs2trello/issues"
+  },
+  "homepage": "https://github.com/diegodob/cvs2trello#readme",
+  "dependencies": {
+    "@octokit/rest": "^15.2.5",
+    "chalk": "^2.3.2",
+    "clear": "^0.1.0",
+    "clui": "^0.3.6",
+    "configstore": "^3.1.1",
+    "figlet": "^1.2.0",
+    "inquirer": "^5.1.0",
+    "lodash": "^4.17.5",
+    "minimist": "^1.2.0",
+    "simple-git": "^1.92.0",
+    "touch": "^3.1.0",
+    "trello-node-api": "0.0.5"
+  }
+}
