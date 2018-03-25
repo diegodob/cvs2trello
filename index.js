@@ -5,15 +5,13 @@ var program = require('commander');
 var parse = require('csv-parse');
 var fs = require('fs')
 var Trello = require("trello");
+var config = require('./config');
 
 // **** CONFIG SECTION ****************************************
-var TRELLO_APPLICATION_KEY = "6d9725e88d3550057121ac6f8cdd0b97";
-var TRELLO_USER_TOKEN = "bcbf360e1cb6ad98205e99393b4eb3db31b4359a317aa323a8a91951a14b142b";
-var TRELLO_BOARD_NAME = "CSI OTRS Tickets";
 
 // **** MAIN SECTION ****************************************
 
-var trello = new Trello(TRELLO_APPLICATION_KEY, TRELLO_USER_TOKEN );
+var trello = new Trello(config.trello.key, config.trello.token);
 
 
 //var trelloNode = require('trello-node-api')("6d9725e88d3550057121ac6f8cdd0b97", "bcbf360e1cb6ad98205e99393b4eb3db31b4359a317aa323a8a91951a14b142b");
@@ -36,11 +34,11 @@ function createTrelloCards(tickets) {
 		if (error) {
 			throw new Error("Something goes wrong: ", error);
 		}
-		aFilteredBoardList = boards.filter(function(otherBoard) { return otherBoard.name == TRELLO_BOARD_NAME });
+		aFilteredBoardList = boards.filter(function(otherBoard) { return otherBoard.name == config.trello.boardName });
 		aBoard = aFilteredBoardList.shift();
 		if (aBoard === undefined) {
-			console.log("Ups... board wasn't found: ", aBoard, TRELLO_BOARD_NAME);	
-			throw new Error("Board wasn't found: ", TRELLO_BOARD_NAME);		
+			console.log("Ups... board wasn't found: ", aBoard, config.trello.boardName);	
+			throw new Error("Board wasn't found: ", config.trello.boardName);		
 		}
 		console.log("Board: ", aBoard);
 		
