@@ -26,7 +26,7 @@ var trello = new Trello(TRELLO_APPLICATION_KEY, TRELLO_USER_TOKEN );
 //	
 //}
 
-function createTrelloCards(csvData) {
+function createTrelloCards(tickets) {
 	console.log("");
 	console.log("Starting Trello board updating");
 	var aBoard ;
@@ -43,6 +43,48 @@ function createTrelloCards(csvData) {
 			throw new Error("Board wasn't found: ", TRELLO_BOARD_NAME);		
 		}
 		console.log("Board: ", aBoard);
+		
+		console.log("getting lists on board: " + aBoard.id);
+
+		trello.getListsOnBoard (aBoard.id, function(error, listsOnBoard2) {
+			if (error) {
+				throw new Error("Something goes wrong: ", error);
+			}
+
+			var boardMap = [];
+			console.log("Lists: ", listsOnBoard2);
+			if (listsOnBoard2 != undefined) {
+				listsOnBoard2.forEach(function(aList) { boardMap[aList.name] = aList });						
+			} 
+			
+			if (listsOnBoard2 == undefined) {
+				throw new Error("::DEBUG:: No lists found");
+			}
+			
+			console.log("Creating cards...", tickets);
+				
+			//Converts tickets into cards
+			tickets.forEach( function (aTicket) {
+
+				  aList = boardMap[aTicket.getCardListName()];
+				  if (aList == undefined) {
+					console.log("Ups... list wasn't found: ", aTicket.getCardListName());	
+					throw new Error("List wasn't found: ", aTicket.getCardListName());							  
+				  }
+				  trello.addCard(aTicket.getCardTitle(), aTicket.getCardDescription(), aList.id, function (error, aCard) {
+					if (error) {
+						throw new Error("Something goes wrong: ", error);
+					}
+					console.log("Created card: ", aCard);
+				  });
+				  
+				  
+			});
+			
+		
+		});
+		
+  
 	});
 	
 	
@@ -55,9 +97,40 @@ function createTrelloCards(csvData) {
 	
 }
 
-function filterCsv(csvData) {
+function getTickets(csvData) {
+	//remote title headers
 	csvData.shift();
-	return csvData;
+	//"Ticket#";"Title";"Created";"Queue";"State";"Priority";"Customer User";"Service";"Agent/Owner"
+	var ticketList = [];
+	csvData.forEach(function(aRow) {  
+		var aTicket = {
+			ticket: aRow[0],
+			title: aRow[1],
+			created: aRow[2],
+			queue: aRow[3],
+			state: aRow[4],
+			priority: aRow[5],
+			customerUser: aRow[6],
+			service: aRow[7],
+			agentOwner: aRow[8],
+			getCardTitle: function() {
+				return "[" + this.ticket + "] " + this.title;
+			},
+			getCardDescription: function() {
+				return "Creada: " + this.created + "\n" +
+						"Cliente: " + this.customerUser + "\n" +
+						"Servicio: " + this.servicie + "\n"						
+						"Priority: " + this.priority + "\n"; 
+			},
+			getCardListName: function() {
+				return this.queue;
+			}
+			
+		};
+		ticketList.push(aTicket);
+	});
+	
+	return ticketList;
 }
 
 function parseCsv(filename) {
@@ -72,7 +145,7 @@ function parseCsv(filename) {
 		.on('end',function() {
 		  //do something wiht csvData
 		  //console.log("Readed: " + csvData);
-		  createTrelloCards(filterCsv(csvData));
+		  createTrelloCards(getTickets(csvData));
 
 	  });
 }
