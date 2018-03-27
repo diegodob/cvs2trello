@@ -21,7 +21,7 @@ var trello = new Trello(config.trello.key, config.trello.token);
 //console.log("Hello world!");
 
 //const run = async () => {
-//	
+//
 //}
 
 function createTrelloCards(tickets) {
@@ -37,11 +37,11 @@ function createTrelloCards(tickets) {
 		aFilteredBoardList = boards.filter(function(otherBoard) { return otherBoard.name == config.trello.boardName });
 		aBoard = aFilteredBoardList.shift();
 		if (aBoard === undefined) {
-			console.log("Ups... board wasn't found: ", aBoard, config.trello.boardName);	
-			throw new Error("Board wasn't found: ", config.trello.boardName);		
+			console.log("Ups... board wasn't found: ", aBoard, config.trello.boardName);
+			throw new Error("Board wasn't found: ", config.trello.boardName);
 		}
 		console.log("Board: ", aBoard);
-		
+
 		console.log("getting lists on board: " + aBoard.id);
 
 		trello.getListsOnBoard (aBoard.id, function(error, listsOnBoard2) {
@@ -52,22 +52,22 @@ function createTrelloCards(tickets) {
 			var boardMap = [];
 			console.log("Lists: ", listsOnBoard2);
 			if (listsOnBoard2 != undefined) {
-				listsOnBoard2.forEach(function(aList) { boardMap[aList.name] = aList });						
-			} 
-			
+				listsOnBoard2.forEach(function(aList) { boardMap[aList.name] = aList });
+			}
+
 			if (listsOnBoard2 == undefined) {
 				throw new Error("::DEBUG:: No lists found");
 			}
-			
+
 			console.log("Creating cards...", tickets);
-				
+
 			//Converts tickets into cards
 			tickets.forEach( function (aTicket) {
 
 				  aList = boardMap[aTicket.getCardListName()];
 				  if (aList == undefined) {
-					console.log("Ups... list wasn't found: ", aTicket.getCardListName());	
-					throw new Error("List wasn't found: ", aTicket.getCardListName());							  
+					console.log("Ups... list wasn't found: ", aTicket.getCardListName());
+					throw new Error("List wasn't found: ", aTicket.getCardListName());
 				  }
 				  trello.addCard(aTicket.getCardTitle(), aTicket.getCardDescription(), aList.id, function (error, aCard) {
 					if (error) {
@@ -75,24 +75,24 @@ function createTrelloCards(tickets) {
 					}
 					console.log("Created card: ", aCard);
 				  });
-				  
-				  
+
+
 			});
-			
-		
+
+
 		});
-		
-  
+
+
 	});
-	
-	
+
+
 	//var cardsPromise = trello.getCardsOnList(listId);
 	//cardsPromise.then((cards) => {
 	//	cards.forEach(function(aCard) { console.log("aCard:", aCard); } );
-	//	
-	//})	
-	
-	
+	//
+	//})
+
+
 }
 
 function getTickets(csvData) {
@@ -100,7 +100,7 @@ function getTickets(csvData) {
 	csvData.shift();
 	//"Ticket#";"Title";"Created";"Queue";"State";"Priority";"Customer User";"Service";"Agent/Owner"
 	var ticketList = [];
-	csvData.forEach(function(aRow) {  
+	csvData.forEach(function(aRow) {
 		var aTicket = {
 			ticket: aRow[0],
 			title: aRow[1],
@@ -117,17 +117,17 @@ function getTickets(csvData) {
 			getCardDescription: function() {
 				return "Creada: " + this.created + "\n" +
 						"Cliente: " + this.customerUser + "\n" +
-						"Servicio: " + this.servicie + "\n"						
-						"Priority: " + this.priority + "\n"; 
+						"Servicio: " + this.servicie + "\n"
+						"Priority: " + this.priority + "\n";
 			},
 			getCardListName: function() {
 				return this.queue;
 			}
-			
+
 		};
 		ticketList.push(aTicket);
 	});
-	
+
 	return ticketList;
 }
 
@@ -138,7 +138,7 @@ function parseCsv(filename) {
 		.on('data', function(csvrow) {
 			//console.log("Row: ", csvrow);
 			//do something with csvrow
-			csvData.push(csvrow);        
+			csvData.push(csvrow);
 		})
 		.on('end',function() {
 		  //do something wiht csvData
@@ -147,14 +147,14 @@ function parseCsv(filename) {
 
 	  });
 }
- 
- 
+
+
 program
   .version('0.1.0')
   .usage('-f <file.csv>')
   .option('-f, --file <value>', 'A file.csv argument')
   .parse(process.argv);
- 
+
 console.log('Csv2Trello');
 console.log(' file: %j', program.file + "");
 //console.log(' args: %j', program.args);
