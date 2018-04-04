@@ -37,6 +37,8 @@ function getTickets(csvData) {
 
 				ticketList.push(aTicket);
 		});
+		//order ticket list
+		ticketList.sort((a,b) => a.created < b.created);
 
 		return ticketList;
 }
