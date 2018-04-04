@@ -13,7 +13,7 @@ class Ticket {
     }
 
     get cardTitle() {
-        return "[" + this.ticket + "] " + this.title;
+        return "[" + this.ticket + "] " + this.title + " (" + this.agentOwner + ")";
     }
 
     get cardDescription() {
