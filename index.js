@@ -91,8 +91,8 @@ function getStickerPromiseCenter(cardId, stickerName, zOrder) {
 	return trello.addStickerToCard(cardId, stickerName, 35, 0, 0, zOrder);
 }
 
-function getStickerPromiseLeft(cardId, zOrder) {
-	return trello.addStickerToCard(cardId, stickerName, 0, 0, 0, zOrder);
+function getStickerPromiseLeft(cardId, stickerName, zOrder) {
+	return trello.addStickerToCard(cardId, stickerName, 5, 0, 0, zOrder);
 }
 
 function getStickerPromiseRight(cardId, stickerName, zOrder) {
@@ -115,13 +115,13 @@ function createCards(someLists, someTickets) {
 			var anAddCardPromise = trello.addCard(aTicket.cardTitle, aTicket.cardDescription, aList.id);
 			anAddCardPromise.then((aCard) => {
 					console.log("*** Created card: ", aCard.name, " [", aCard.id, "] xx:");
-					var zOrder = 0;
+					var zOrder = 1;
 					var stickerPromises = [];
-					if (aTicket.star) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "star	", zOrder++))};
+					if (aTicket.star) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "star", zOrder++))};
 
 					if (aTicket.thumbsup) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "thumbsup", zOrder++))};
 
-					if (aTicket.clock) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "clock", zOrder++))};
+					if (aTicket.clock) {stickerPromises.push(getStickerPromiseLeft(aCard.id, "clock", zOrder++))};
 
 					if (aTicket.warning) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "warning", zOrder++))};
 					
@@ -133,7 +133,7 @@ function createCards(someLists, someTickets) {
 
 					if (aTicket.frown) {stickerPromises.push(getStickerPromiseCenter(aCard.id,"frown", zOrder++))};
 					
-					if (aTicket.rocket) {console.log("xxxxxxgggggggggggg:" + true); stickerPromises.push(getStickerPromiseRight(aCard.id,"heart", zOrder++))};
+					if (aTicket.rocket) {stickerPromises.push(getStickerPromiseRight(aCard.id,"heart", zOrder++))};
 					
 					if (stickerPromises.length != 0) {
 						return Promise.all(stickerPromises);
