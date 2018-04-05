@@ -52,7 +52,6 @@ function getParseCsvPromise(filename) {
 					.on('data', function(csvrow) {
 						//console.log("Row: ", csvrow);
 						//do something with csvrow
-						console.log("^*+*^: ", csvrow)
 						csvData.push(csvrow);
 					})
 					.on('end',function() {
@@ -88,8 +87,19 @@ function getDeleteCardsPromise(someCards) {
 		return Promise.all(somePromises);
 }
 
+function getStickerPromiseCenter(cardId, stickerName, zOrder) {
+	return trello.addStickerToCard(cardId, stickerName, 35, 0, 0, zOrder);
+}
+
+function getStickerPromiseLeft(cardId, zOrder) {
+	return trello.addStickerToCard(cardId, stickerName, 0, 0, 0, zOrder);
+}
+
+function getStickerPromiseRight(cardId, stickerName, zOrder) {
+	return trello.addStickerToCard(cardId, stickerName, 70, 0, 0, zOrder);
+}
+
 function createCards(someLists, someTickets) {
-		console.log("¡¡¡¡¿¿¿¿¡¡++: ", someTickets);
 		//generate auxiliar index of lists
 		var listsMap = [];
 		someLists.forEach(function(aList) { listsMap[aList.name] = aList });
@@ -101,32 +111,30 @@ function createCards(someLists, someTickets) {
 			if (aList == undefined) {
 					console.log("Ups... list wasn't found: ", aTicket.getCardListName());
 					throw new Error("List wasn't found: ", aTicket.getCardListName());
-			}
+			}			
 			var anAddCardPromise = trello.addCard(aTicket.cardTitle, aTicket.cardDescription, aList.id);
 			anAddCardPromise.then((aCard) => {
 					console.log("*** Created card: ", aCard.name, " [", aCard.id, "] xx:");
-
+					var zOrder = 0;
 					var stickerPromises = [];
-					if (aTicket.star) {
-							stickerPromises.push(trello.addStickerToCard(aCard.id, "star", 45, 0, 0, 0));
-					}
+					if (aTicket.star) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "star	", zOrder++))};
 
-					if (aTicket.thumbsup) {
-							stickerPromises.push(trello.addStickerToCard(aCard.id, "thumbsup", 45, 0, 0, 0));
-					}
+					if (aTicket.thumbsup) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "thumbsup", zOrder++))};
 
-					if (aTicket.clock) {
-							stickerPromises.push(trello.addStickerToCard(aCard.id, "clock", 45, 0, 0, 0));
-					}
+					if (aTicket.clock) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "clock", zOrder++))};
 
-					if (aTicket.frown) {
-							stickerPromises.push(trello.addStickerToCard(aCard.id, "frown", 45, 0, 0, 0));
-					}
+					if (aTicket.warning) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "warning", zOrder++))};
+					
+					if (aTicket.laugh) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "laugh"), zOrder++)};
 
-					if (aTicket.warning) {
-							stickerPromises.push(trello.addStickerToCard(aCard.id, "warning", 45, 0, 0, 0));
-					}
+					if (aTicket.smile) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "smile", zOrder++))};
 
+					if (aTicket.huh) {stickerPromises.push(getStickerPromiseCenter(aCard.id,"huh", zOrder++))};
+
+					if (aTicket.frown) {stickerPromises.push(getStickerPromiseCenter(aCard.id,"frown", zOrder++))};
+					
+					if (aTicket.rocket) {console.log("xxxxxxgggggggggggg:" + true); stickerPromises.push(getStickerPromiseRight(aCard.id,"heart", zOrder++))};
+					
 					if (stickerPromises.length != 0) {
 						return Promise.all(stickerPromises);
 					}

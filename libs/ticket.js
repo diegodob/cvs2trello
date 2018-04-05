@@ -15,7 +15,11 @@ const TicktAux = {
     var createTS = Date.parse(created);
     return nowTS - createTS;
   }
+  
+
 }
+
+
 
 class Ticket {
     constructor(ticket, title, created, queue, state, priority, customerUser, service, agentOwner) {
@@ -24,8 +28,9 @@ class Ticket {
         this.created = created;
         this.ticketQueue = queue;
         this.state = state;
-        this.priority = priority;
+        this.ticketPriority = priority;
         this.customerUser = customerUser;
+		console.log("xxx:",service);
         this.service = service;
         this.agentOwner = agentOwner;
     }
@@ -37,9 +42,10 @@ class Ticket {
     }
 
     get cardDescription() {
+		console.log("xxx:",this.service);
         return "Creada: " + this.created + "\n" +
             "Cliente: " + this.customerUser + "\n" +
-            "Servicio: " + this.servicie + "\n"
+            "Servicio: " + this.service + "\n"
             "Priority: " + this.priority + "\n";
     }
 
@@ -56,26 +62,62 @@ class Ticket {
         return TicktAux.age(this.created) < TicktAux.hoursTS(1);
     }
 
-    get thumbsup() {
-        //between 1 hours days and 24 hours
-        return TicktAux.hoursTS(1) <= TicktAux.age(this.created) && TicktAux.age(this.created) < TicktAux.hoursTS(8) ;
-    }
+	get laugh() {
+		return TicktAux.hoursTS(1) <= TicktAux.age(this.created) && TicktAux.age(this.created) < TicktAux.hoursTS(9) ;
+	}
+	
+	get smile() {
+		return TicktAux.hoursTS(9) <= TicktAux.age(this.created) && TicktAux.age(this.created) < TicktAux.daysTS(3) ;
+	}
 
-    get clock() {
-        //between 1 days and 3 days
-        return TicktAux.hoursTS(8) <= TicktAux.age(this.created) && TicktAux.age(this.created) < TicktAux.daysTS(3) ;
-    }
 
-    get warning() {
-      //between 1 days and 3 days
-      return TicktAux.daysTS(3) <= TicktAux.age(this.created) && TicktAux.age(this.created) < TicktAux.daysTS(7) ;
-    }
+	get huh() {
+		return TicktAux.daysTS(3) <= TicktAux.age(this.created) && TicktAux.age(this.created) < TicktAux.daysTS(7) ;
+	}
 
+	
     get frown() {
         //more than 7 days
         return TicktAux.daysTS(7) <= TicktAux.age(this.created) ;
     }
 
+    get thumbsup() {
+        //between 1 hours days and 24 hours
+        //return TicktAux.hoursTS(1) <= TicktAux.age(this.created) && TicktAux.age(this.created) < TicktAux.hoursTS(9) ;
+		return false;
+    }
+
+    get warning() {
+      //between 1 days and 3 days
+      //return TicktAux.daysTS(3) <= TicktAux.age(this.created) && TicktAux.age(this.created) < TicktAux.daysTS(7) ;
+	  return false;
+    }
+
+
+    get clock() {
+        //between 1 days and 3 days
+        //return TicktAux.hoursTS(8) <= TicktAux.age(this.created) && TicktAux.age(this.created) < TicktAux.daysTS(3) ;
+		return this.priority == "high";
+    }
+
+    get rocket() {
+		console.log("xxxxxxxx: ", this.service == "PROVISION DE EQUIPAMIENTO E INSUMOS::" || this.service == "PROVISION DE EQUIPAMIENTO E INSUMOS::Solicitud PC");
+		return this.service == "PROVISION DE EQUIPAMIENTO E INSUMOS::" || this.service == "PROVISION DE EQUIPAMIENTO E INSUMOS::Solicitud PC"; 
+    }
+	
+	get priority() {
+		if (this.ticketPriority == "2 Baja") {
+			return "low";
+		} else if (this.ticketPriority == "3 Normal") {
+				return "normal";
+		} else if (this.ticketPriority == "4 Alta") {
+				return "high";
+		} else {
+			throw new Error("Priority isn't valid: " + this.priority);
+		}
+		
+	}
+	
 
 }
 
