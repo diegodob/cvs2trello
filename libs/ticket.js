@@ -58,12 +58,12 @@ class Ticket {
 
     get thumbsup() {
         //between 1 hours days and 24 hours
-        return TicktAux.hoursTS(1) <= TicktAux.age(this.created) && TicktAux.age(this.created) < TicktAux.hoursTS(1) ;
+        return TicktAux.hoursTS(1) <= TicktAux.age(this.created) && TicktAux.age(this.created) < TicktAux.hoursTS(8) ;
     }
 
     get clock() {
         //between 1 days and 3 days
-        return TicktAux.daysTS(1) <= TicktAux.age(this.created) && TicktAux.age(this.created) < TicktAux.daysTS(3) ;
+        return TicktAux.hoursTS(8) <= TicktAux.age(this.created) && TicktAux.age(this.created) < TicktAux.daysTS(3) ;
     }
 
     get warning() {
