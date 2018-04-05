@@ -103,7 +103,36 @@ function createCards(someLists, someTickets) {
 					throw new Error("List wasn't found: ", aTicket.getCardListName());
 			}
 			var anAddCardPromise = trello.addCard(aTicket.cardTitle, aTicket.cardDescription, aList.id);
-			anAddCardPromise.then((aCard) => console.log("*** Created card: ", aCard.title, " [", aCard.id, "]" )).catch( (anError) => {throw anError} );
+			anAddCardPromise.then((aCard) => {
+					console.log("*** Created card: ", aCard.name, " [", aCard.id, "] xx:");
+
+					var stickerPromises = [];
+					if (aTicket.star) {
+							stickerPromises.push(trello.addStickerToCard(aCard.id, "star", 45, 0, 0, 0));
+					}
+
+					if (aTicket.thumbsup) {
+							stickerPromises.push(trello.addStickerToCard(aCard.id, "thumbsup", 45, 0, 0, 0));
+					}
+
+					if (aTicket.clock) {
+							stickerPromises.push(trello.addStickerToCard(aCard.id, "clock", 45, 0, 0, 0));
+					}
+
+					if (aTicket.frown) {
+							stickerPromises.push(trello.addStickerToCard(aCard.id, "frown", 45, 0, 0, 0));
+					}
+
+					if (aTicket.warning) {
+							stickerPromises.push(trello.addStickerToCard(aCard.id, "warning", 45, 0, 0, 0));
+					}
+
+					if (stickerPromises.length != 0) {
+						return Promise.all(stickerPromises);
+					}
+
+
+			}).catch( (anError) => {throw anError} );
 
 	});
 
