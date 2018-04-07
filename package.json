@@ -24,7 +24,7 @@
   "dependencies": {
     "commander": "^2.15.1",
     "csv-parse": "^2.0.4",
-    "imagejs": "0.0.9",
+    "promises-pipeline": "^1.0.3",
     "trello": "^0.8.0"
   },
   "bin": {
