@@ -99,7 +99,7 @@ function getStickerPromiseRight(cardId, stickerName, zOrder) {
 	return trello.addStickerToCard(cardId, stickerName, 70, 0, 0, zOrder);
 }
 
-function getAllStickerForACardPromise(aTicket, aCard, listsMap) {
+function getAllStickerForACardPromise(aTicket, aCard) {
 		var zOrder = 1;
 		var stickerPromises = [];
 		if (aTicket.star) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "star", zOrder++))};
@@ -123,6 +123,22 @@ function getAllStickerForACardPromise(aTicket, aCard, listsMap) {
 		if (stickerPromises.length != 0) {
 			return Promise.all(stickerPromises);
 		}
+}
+
+function getAllStickersForAllCards(trelloListsMap, someTickets, aCardList) {
+		var ticketByCardIdIndex = [];
+
+		for (var i = 0; i < aCardList.length; i++) {
+				ticketByCardIdIndex[aCardList[i].id] =  someTickets[i];
+		}
+
+		var allStickerPromisesList = [];
+		aCardList.forEach( (aCard) => {
+				var aTicket = ticketByCardIdIndex[aCard.id];
+				console.log("Add sticker for card: %s.", aCard.name);
+				allStickerPromisesList.push(getAllStickerForACardPromise(aTicket, aCard));
+		});
+		return allStickerPromisesList;
 }
 
 function getCreateAllCardsPromise(trelloListsMap, someTickets) {
@@ -188,28 +204,15 @@ function main() {
 		}).then( () => {
 				console.log("Deleting all cards... ");
 				//create cards
-
 				return getCreateAllCardsPromise(context.trelloListsMap, someTickets);
 		}).then( (aCardList) => {
-				var ticketByCardIdIndex = [];
-
-				for (var i = 0; i < aCardList.length; i++) {
-						ticketByCardIdIndex[aCardList[i].id] =  someTickets[i];
-				}
-
-				var allStickerPromisesList = [];
-				aCardList.forEach( (aCard) => {
-						var aTicket = ticketByCardIdIndex[aCard.id];
-						console.log("Add sticker for card: %s.", aCard.name);
-						allStickerPromisesList.push(getAllStickerForACardPromise(aTicket, aCard, context.trelloListsMap));
-				});
-				return allStickerPromisesList;
+				return getAllStickersForAllCards(context.trelloListsMap, someTickets, aCardList);
 		}).catch( (anError) => {
-				console.error("=-=-=-=-=ERROR=-=-=-=", anError);
+				console.error("=-=-=-=-=-=-=-=-=-=ERROR=-=-=-=-=-=-=-=-=");
 				console.error("error: ", anError);
-				console.error("=-=-=-=-=ERROR=-=-=-=", anError);
+				console.error("=-=-=-=-=-=-=-=-=-=ERROR=-=-=-=-=-=-=-=-=");
 		});
-
+//DDD
 }
 
 main();
