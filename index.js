@@ -99,114 +99,116 @@ function getStickerPromiseRight(cardId, stickerName, zOrder) {
 	return trello.addStickerToCard(cardId, stickerName, 70, 0, 0, zOrder);
 }
 
-function createCards(someLists, someTickets) {
-		//generate auxiliar index of lists
-		var listsMap = [];
-		someLists.forEach(function(aList) { listsMap[aList.name] = aList });
+function getAllStickerForACardPromise(aTicket, aCard, listsMap) {
+		var zOrder = 1;
+		var stickerPromises = [];
+		if (aTicket.star) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "star", zOrder++))};
 
-		//Converts tickets into card
-		someTickets.forEach( function (aTicket) {
+		if (aTicket.thumbsup) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "thumbsup", zOrder++))};
 
-			var aList = listsMap[aTicket.ticketQueue];
-			if (aList == undefined) {
-					console.log("Ups... list wasn't found: ", aTicket.ticketQueue);
-					throw new Error("List wasn't found: ", aTicket.ticketQueue);
-			}
-			var anAddCardPromise = trello.addCard(aTicket.cardTitle, aTicket.cardDescription, aList.id);
-			anAddCardPromise.then((aCard) => {
-					console.log("*** Created card: ", aCard.name, " [", aCard.id, "]");
-					var zOrder = 1;
-					var stickerPromises = [];
-					if (aTicket.star) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "star", zOrder++))};
+		if (aTicket.clock) {stickerPromises.push(getStickerPromiseLeft(aCard.id, "clock", zOrder++))};
 
-					if (aTicket.thumbsup) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "thumbsup", zOrder++))};
+		if (aTicket.warning) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "warning", zOrder++))};
 
-					if (aTicket.clock) {stickerPromises.push(getStickerPromiseLeft(aCard.id, "clock", zOrder++))};
+		if (aTicket.laugh) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "laugh"), zOrder++)};
 
-					if (aTicket.warning) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "warning", zOrder++))};
+		if (aTicket.smile) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "smile", zOrder++))};
 
-					if (aTicket.laugh) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "laugh"), zOrder++)};
+		if (aTicket.huh) {stickerPromises.push(getStickerPromiseCenter(aCard.id,"huh", zOrder++))};
 
-					if (aTicket.smile) {stickerPromises.push(getStickerPromiseCenter(aCard.id, "smile", zOrder++))};
+		if (aTicket.frown) {stickerPromises.push(getStickerPromiseCenter(aCard.id,"frown", zOrder++))};
 
-					if (aTicket.huh) {stickerPromises.push(getStickerPromiseCenter(aCard.id,"huh", zOrder++))};
+		if (aTicket.rocket) {stickerPromises.push(getStickerPromiseRight(aCard.id,"heart", zOrder++))};
 
-					if (aTicket.frown) {stickerPromises.push(getStickerPromiseCenter(aCard.id,"frown", zOrder++))};
-
-					if (aTicket.rocket) {stickerPromises.push(getStickerPromiseRight(aCard.id,"heart", zOrder++))};
-
-					if (stickerPromises.length != 0) {
-						return Promise.all(stickerPromises);
-					}
-
-
-			}).catch( (anError) => {throw anError} );
-
-	});
-
+		if (stickerPromises.length != 0) {
+			return Promise.all(stickerPromises);
+		}
 }
 
-// **** MAIN SECTION ****************************************
+function getCreateAllCardsPromise(trelloListsMap, someTickets) {
+
+		var allCardsPromiseList = [];
+		someTickets.forEach( function (aTicket) {
+				var aList = trelloListsMap[aTicket.ticketQueue];
+				if (aList == undefined) {
+						console.log("Ups... list wasn't found: ", aTicket.ticketQueue);
+						throw new Error("List wasn't found: ", aTicket.ticketQueue);
+				}
+				var anAddCardPromise = trello.addCard(aTicket.cardTitle, aTicket.cardDescription, aList.id);
+				allCardsPromiseList.push(anAddCardPromise);
+		});
+		return Promise.all(allCardsPromiseList);
+}
 
 function main() {
-	program
-	  .version('0.1.0')
-	  .usage('-f <file.csv>')
-	  .option('-f, --file <value>', 'A file.csv argument')
-	  .parse(process.argv);
+		program
+		  .version('0.1.0')
+		  .usage('-f <file.csv>')
+		  .option('-f, --file <value>', 'A file.csv argument')
+		  .parse(process.argv);
 
-	console.log('Csv2Trello');
-	console.log(' file: %j', program.file + "");
+		console.log('Csv2Trello');
+		console.log(' file: %j', program.file + "");
 
-  //var csvData = parseCsv(program.file);
+		var someTickets;
+		var context = {};
+		//Parse
 
+		getParseCsvPromise(program.file).then( (csvData) => {
+				console.log("csvData: ", csvData);
+				someTickets = getTickets(csvData);
+				console.log("someTickets: ", someTickets);
 
+				return trello.getBoards("me");
+		//Get Board
+		}).then( (someBoards) => {
 
-	//var getBoardPromise = trello.getBoards("me");
+				var aBoard = selectBoardOrFail(someBoards);
 
-	var someTickets;
-
-	getParseCsvPromise(program.file).then( (csvData) => {
-			console.log("csvData: ", csvData);
-			someTickets = getTickets(csvData);
-			console.log("someTickets: ", someTickets);
-
-			return trello.getBoards("me");
-	}).then( (someBoards) => {
-
-			var aBoard = selectBoardOrFail(someBoards);
-
-			var getListsOnBoardPromise = trello.getListsOnBoard(aBoard.id);
-			getListsOnBoardPromise.then( (someLists) => {
-					console.log("Existing lists: ", someLists.map( (aList) => aList.name))
-
-
-					var someGetCardsOnListPromises = getCardsOnListPromises(someLists);
-					var aPromiseThatRetrieveAllCardsOnBoard = Promise.all(someGetCardsOnListPromises);
-
-					aPromiseThatRetrieveAllCardsOnBoard.then((anArrayOfCards) => {
-							var anArrayWithAllCards = flattenArrayOfArray(anArrayOfCards);
-							console.log("Existing cards: ", anArrayWithAllCards.map( (aCard) => aCard.name));
-
-							var aPromiseThatDeleteAllCards = getDeleteCardsPromise(anArrayWithAllCards);
-							aPromiseThatDeleteAllCards.then( (nothing) => { console.log("Deleting all cards... ") } ).catch( (anError)=> { throw anError } );
-
-							createCards(someLists, someTickets);
+				return trello.getListsOnBoard(aBoard.id);
+		//Get board lists
+		}).then( (someLists) => {
+				console.log("someLists: " + someLists);
+				context.trelloListsMap = [];
+				someLists.forEach(function(aList) { context.trelloListsMap[aList.name] = aList });
 
 
-					}).catch( (anError)=> { throw anError } );
+				console.log("Existing lists: ", someLists.map( (aList) => aList.name))
 
-			}).catch( (anError) => {throw anError} );
+				var someGetCardsOnListPromises = getCardsOnListPromises(someLists);
+				return Promise.all(someGetCardsOnListPromises);
 
+		//get cards from all lists
+		}).then( (anArrayOfCards) => {
+				var anArrayWithAllCards = flattenArrayOfArray(anArrayOfCards);
+				console.log("Existing cards: ", anArrayWithAllCards.map( (aCard) => aCard.name));
 
+				return getDeleteCardsPromise(anArrayWithAllCards);
 
-	}).catch( (anError) => {
-			console.error("=-=-=-=-=ERROR=-=-=-=", anError);
-			console.error("error: ", anError);
-			console.error("=-=-=-=-=ERROR=-=-=-=", anError);
+		}).then( () => {
+				console.log("Deleting all cards... ");
+				//create cards
 
-	});
+				return getCreateAllCardsPromise(context.trelloListsMap, someTickets);
+		}).then( (aCardList) => {
+				var ticketByCardIdIndex = [];
 
+				for (var i = 0; i < aCardList.length; i++) {
+						ticketByCardIdIndex[aCardList[i].id] =  someTickets[i];
+				}
+
+				var allStickerPromisesList = [];
+				aCardList.forEach( (aCard) => {
+						var aTicket = ticketByCardIdIndex[aCard.id];
+						console.log("Add sticker for card: %s.", aCard.name);
+						allStickerPromisesList.push(getAllStickerForACardPromise(aTicket, aCard, context.trelloListsMap));
+				});
+				return allStickerPromisesList;
+		}).catch( (anError) => {
+				console.error("=-=-=-=-=ERROR=-=-=-=", anError);
+				console.error("error: ", anError);
+				console.error("=-=-=-=-=ERROR=-=-=-=", anError);
+		});
 
 }
 
