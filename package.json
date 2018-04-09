@@ -4,7 +4,7 @@
   "description": "Convert an CSV file to trello cards in a board",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node_modules/.bin/tape test/*.js"
   },
   "repository": {
     "type": "git",
@@ -29,5 +29,8 @@
   },
   "bin": {
     "csv2trello": "./index.js"
+  },
+  "devDependencies": {
+    "tape": "^4.9.0"
   }
 }

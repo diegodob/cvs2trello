@@ -37,9 +37,9 @@ function getTickets(csvData) {
 
 				ticketList.push(aTicket);
 		});
-		//order ticket list
-		ticketList.sort((a,b) => a.created < b.created);
-
+		//order ticket list (Recents ticket first)
+		var x = ticketList.sort((aTicket,otherTicket) => -aTicket.compare(otherTicket));
+		x.forEach((x) => { console.log(">>>>>>:", x.created)});
 		return ticketList;
 }
 
@@ -140,7 +140,36 @@ function getAllStickersForAllCards(trelloListsMap, someTickets, aCardList) {
 		});
 		return allStickerPromisesList;
 }
-
+/*
+function getCreateAllCardsPromise(trelloListsMap, someTickets) {
+		return new Promise(function(resolve, reject) {
+				console.log("10) *******");
+				var allCardsPromiseList = [];
+				someTickets.forEach( function (aTicket) {
+						var aList = trelloListsMap[aTicket.ticketQueue];
+						if (aList == undefined) {
+								console.log("Ups... list wasn't found: ", aTicket.ticketQueue);
+								throw new Error("List wasn't found: ", aTicket.ticketQueue);
+						}
+						console.log("14) ***** ====> Created: ", aTicket);
+						var anAddCardPromise = trello.addCard(aTicket.cardTitle, aTicket.cardDescription, aList.id);
+						allCardsPromiseList.push(anAddCardPromise);
+				});
+				//return Promise.all(allCardsPromiseList);
+				console.log("20) *******");
+				var result = allCardsPromiseList.reduce((promiseChain, currentTask) => {
+				    return promiseChain.then(chainResults =>
+				        currentTask.then(currentResult => {
+										console.log("25.*) ******* currentResult: ", currentResult.name);
+				            return [ ...chainResults, currentResult ]
+								})
+				    ).catch((anError) => reject(anError));
+				}, Promise.resolve([]));
+				console.log("30) *******: ", result);
+				resolve(result);
+		});
+}
+*/
 function getCreateAllCardsPromise(trelloListsMap, someTickets) {
 
 		var allCardsPromiseList = [];
@@ -150,7 +179,12 @@ function getCreateAllCardsPromise(trelloListsMap, someTickets) {
 						console.log("Ups... list wasn't found: ", aTicket.ticketQueue);
 						throw new Error("List wasn't found: ", aTicket.ticketQueue);
 				}
-				var anAddCardPromise = trello.addCard(aTicket.cardTitle, aTicket.cardDescription, aList.id);
+
+				//var positon = 99999999 - parseFloat(aTicket.ticket.substring(0,8));
+				//var anAddCardPromise = trello.addCard(aTicket.cardTitle, aTicket.cardDescription, aList.id);
+				var extraParams = {pos: aTicket.cardPosition, desc:aTicket.cardDescription};
+				var anAddCardPromise = trello.addCardWithExtraParams(aTicket.cardTitle, extraParams, aList.id);
+
 				allCardsPromiseList.push(anAddCardPromise);
 		});
 		return Promise.all(allCardsPromiseList);
@@ -204,8 +238,13 @@ function main() {
 		}).then( () => {
 				console.log("Deleting all cards... ");
 				//create cards
+				console.log("5) *******");
+
 				return getCreateAllCardsPromise(context.trelloListsMap, someTickets);
 		}).then( (aCardList) => {
+				//console.log("*************** aCardList: ", aCardList);
+				console.log("60) *******");
+				aCardList.forEach((aCard) => {console.log(aCard.name)});
 				return getAllStickersForAllCards(context.trelloListsMap, someTickets, aCardList);
 		}).catch( (anError) => {
 				console.error("=-=-=-=-=-=-=-=-=-=ERROR=-=-=-=-=-=-=-=-=");
