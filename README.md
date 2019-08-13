@@ -47,7 +47,8 @@ sed -i '1d'  /var/www/otrs2trello/ticket.csv
 chmod +r  /var/www/otrs2trello/ticket.csv
 '''
 
-NOTA 1) E
+NOTA 1) Elimino la primera linea del archivo ya que el parser de NODE.js que uso necesita que los tipos de datos sean consistentes para una columna a lo largo de todo el archivo
+NOTA 2) Bajo con CURL el archivo csv ya que el script de NODE.js espera el archivo local
 
 
 ## 2. Crear un tablero de Trello
