@@ -20,21 +20,39 @@ var trello = new Trello(Config.trello.key, Config.trello.token);
 function getTickets(csvData) {
 		//remove headers row
 		csvData.shift();
-		//"Ticket#";"Title";"Created";"Queue";"State";"Priority";"Customer User";"Service";"Agent/Owner"
+		//Original: "Ticket#";"Title";"Created";"Queue";"State";"Priority";"Customer User";"Service";"Agent/Owner"
+		//Actual: 0- Number,	1- Ticket#,	2- Age,	3-Title,	4-Created,	5-Changed,	6-Queue,	7-State,	8-Priority,	9-Customer User,	10-CustomerID,	11-Agent/Owner,	12-Responsible
+		//			
+
 		var ticketList = [];
 		csvData.forEach(function(aRow) {
+				/*
+				//Original
 				var aTicket = new Ticket(
-						aRow[0],
+						aRow[0], //"Ticket#"
+						aRow[1], // ;"Title";
+						aRow[2], // "Created";
+						aRow[3], //"Queue";
+						aRow[4], //"State";
+						aRow[5], //"Priority";
+						aRow[6], //"Customer User";
+						aRow[7], //"Service";
+						aRow[8] //"Agent/Owner"
+				);
+				*/
+				//Actual
+				var aTicket = new Ticket(
 						aRow[1],
-						aRow[2],
 						aRow[3],
 						aRow[4],
-						aRow[5],
 						aRow[6],
 						aRow[7],
-						aRow[8]
+						aRow[8],
+						aRow[9],
+						"",
+						aRow[11]
 				);
-
+				
 				ticketList.push(aTicket);
 		});
 		//order ticket list (Recents ticket first)
