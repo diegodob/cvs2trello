@@ -31,7 +31,23 @@ El reoprte debe exportar a CSV y debe contener las siguientes columnas en orden:
 11-Agent/Owner
 12-Responsible
 
-El reporte debe dejarse en .\examples\tickets.csv
+El reporte debe dejarse en .\examples\tickets.csv. Se le debe remover la primer linea que contiene los headers.
+
+Yo utilizo un archivo croneado con el siguiente código.
+
+'''
+
+#El script deja el archivo siempre con un nombre distinto, por eso me aseguro de borrar todo primero y luego renombrar todo lo que haya con ese nombre
+rm /var/www/otrs2trello/*
+/usr/share/otrs/bin/otrs.GenerateStats.pl -n 10014 -f CSV -o /var/www/otrs2trello
+#Dejo el archivo disponible con un nombre determinado y para descargarlo con apache
+mv /var/www/otrs2trello/* /var/www/otrs2trello/ticket.csv
+#Remueve primer linea que tiene las cabeceras
+sed -i '1d'  /var/www/otrs2trello/ticket.csv
+chmod +r  /var/www/otrs2trello/ticket.csv
+'''
+
+NOTA 1) E
 
 
 ## 2. Crear un tablero de Trello

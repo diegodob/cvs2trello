@@ -1,5 +1,3 @@
-"Ticket#";"Title";"Created";"Queue";"State";"Priority";"Customer User";"Service";"Agent/Owner";""
-"2018031510000254";"Mantenimiento.-";"2018-03-15 17:10:05";"INFRAESTRUCTURA";"Abierto";"3 Normal";"mscarpello";"SISTEMAS::Mantenimiento Reactivo";"lorenteb";""
-"2018031510000218";"Tema celular.-";"2018-03-15 15:10:13";"SOPORTE::TELEFONIA";"Abierto";"2 Baja";"fsotelo";"SOPORTE TECNICO::Mantenimiento Reactivo";"embonanata";""
-"2018031510000227";"activaciòn Office";"2018-03-15 15:30:02";"SOPORTE";"Abierto";"3 Normal";"abercovich";"SOPORTE TECNICO::Mantenimiento Reactivo";"nestrada";""
-"2018031510000228";"activaciòn Office";"2018-03-15 15:30:02";"ADMINISTRACION";"Abierto";"3 Normal";"abercovich";"SOPORTE TECNICO::Mantenimiento Reactivo";"nestrada";""
+"1";"1024368";"168";"Solicitud de cartuchos";"2019-08-13 09:30:03";"2019-08-13 09:30:03";"DTI::Entrada";"new";"3 normal";"yyy@example.gob.ar";"yyy@example.gob.ar";"rrodriguez";"admin";""
+"2";"1024366";"8569";"sin acceso a carpeta compartida";"2019-08-13 07:10:02";"2019-08-13 08:35:02";"DTI::Infraestructura";"new";"3 normal";"zzzz@example.gob.ar";"zzzz@example.gob.ar";"ogomez";"admin";""
+"3";"1024287";"68569";"Problema PC";"2019-08-12 14:30:02";"2019-08-12 14:30:02";"DTI::Entrada";"new";"3 normal";"wwww@example.gob.ar";"wwww@example.gob.ar";"rrodriguez";"admin";""
