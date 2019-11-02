@@ -23,7 +23,7 @@
   "homepage": "https://github.com/diegodob/cvs2trello#readme",
   "dependencies": {
     "commander": "^2.15.1",
-    "csv-parse": "^2.0.4",
+    "csv-parse": "^4.4.6",
     "promises-pipeline": "^1.0.3",
     "trello": "^0.8.0"
   },
